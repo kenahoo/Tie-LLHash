@@ -16,11 +16,6 @@ ok 1;
 
 ######################### End of black magic.
 
-sub report_result {
-  ok $_[0];
-}
-
-
 {
   my (%hash, %hash2);
 
