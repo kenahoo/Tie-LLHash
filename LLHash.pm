@@ -4,8 +4,7 @@ use vars qw($VERSION);
 use Carp;
 
 
-$VERSION = '0.04';
-
+$VERSION = sprintf '%d.%03d', q$Revision$ =~ /: (\d+).(\d+)/;
 
 sub TIEHASH {
    my $pkg = shift;
