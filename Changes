@@ -5,6 +5,11 @@ Change log for Tie-LLHash:
  - delete($hash{$key}) now returns the associated value, previously it
    returned an internal data structure not meant for external use.
 
+ - With normal perl hashes, the caller can call delete() in a loop
+   that uses the hash's iterator, as long as the item being deleted is
+   the most recent item returned by the iterator.  This wasn't working
+   in Tie::LLHash, but now it's fixed.  [Spotted by Steve Tolkin]
+
  - Un-synchronized version numbers with CVS
 
 1.002  2000/04/01 16:04:27

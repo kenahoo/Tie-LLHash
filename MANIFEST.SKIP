@@ -1,0 +1,11 @@
+bak$
+\.SKIP$
+^blib
+^Makefile$
+^pm_to_blib$
+CVS
+^_build
+^Tie-LLHash
+^Build$
+^\.
+\.#
