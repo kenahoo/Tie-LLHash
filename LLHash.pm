@@ -4,7 +4,7 @@ use vars qw($VERSION);
 use Carp;
 
 
-$VERSION = sprintf '%d.%03d', q$Revision$ =~ /: (\d+).(\d+)/;
+$VERSION = '1.003';
 
 sub TIEHASH {
    my $pkg = shift;
@@ -36,11 +36,12 @@ sub STORE {
    my $name = shift;
    my $value = shift;
 
-   unless (exists $self->{'nodes'}{$name}) {
-     croak ("No such key '$name', use first or insert to add keys") unless $self->{lazy};
-     return $self->last($name, $value);
+   if (exists $self->{'nodes'}{$name}) {
+     return $self->{'nodes'}{$name}{'value'} = $value;
    }
-   return $self->{'nodes'}{$name}{'value'} = $value;
+
+   croak ("No such key '$name', use first() or insert() to add keys") unless $self->{lazy};
+   return $self->last($name, $value);
 }
 
 
@@ -65,35 +66,29 @@ sub DELETE {
   my $key = shift;
   #my $debug = 0;
   
-  
-  #print ("Deleting $key ...") if $debug;
   return unless $self->EXISTS($key);
   
   if ($self->{'first'} eq $self->{'last'}) {
-    #print ("only key\n") if $debug;
     $self->{'first'} = undef;
     $self->{'current'} = undef;
     $self->{'last'} = undef;
     
   } elsif ($self->{'first'} eq $key) {
-    #print ("first key\n") if $debug;
     $self->{'first'} = $self->{'nodes'}{$key}{'next'};
     $self->{'nodes'}{ $self->{'first'} }{'prev'} = undef;
     
   } elsif ($self->{'last'} eq $key) {
-    #print ("last key\n") if $debug;
     $self->{'last'} = $self->{'nodes'}{$key}{'prev'};
     $self->{'nodes'}{ $self->{'last'} }{'next'} = undef;
     
   } else {
-    #print ("middle key\n") if $debug;
     my $key_one   = $self->{'nodes'}{$key}{'prev'};
     my $key_three = $self->{'nodes'}{$key}{'next'};
     $self->{'nodes'}{$key_one  }{'next'} = $key_three;
     $self->{'nodes'}{$key_three}{'prev'} = $key_one;
   }
    
-  return (delete $self->{'nodes'}{$key}, $self->reset)[0];
+  return +(delete $self->{'nodes'}{$key})->{value};
 }
 
 sub CLEAR {
