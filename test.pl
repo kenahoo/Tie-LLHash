@@ -2,7 +2,7 @@ $^W = 1;
 
 use strict;
 use Test;
-BEGIN { plan tests => 16 }
+BEGIN { plan tests => 22 }
 use Tie::LLHash;
 ok 1;
 
