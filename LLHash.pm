@@ -52,7 +52,9 @@ sub FIRSTKEY {
 
 sub NEXTKEY {
    my $self = shift;
-   return $self->{'current'} = $self->{'nodes'}{ $self->{'current'} }{'next'};
+   return $self->{'current'} = (defined $self->{'current'}
+				? $self->{'nodes'}{ $self->{'current'} }{'next'}
+				: $self->{'first'});
 }
 
 sub EXISTS {
@@ -67,25 +69,28 @@ sub DELETE {
   #my $debug = 0;
   
   return unless $self->EXISTS($key);
-  
+  my $node = $self->{'nodes'}{$key};
+
   if ($self->{'first'} eq $self->{'last'}) {
     $self->{'first'} = undef;
     $self->{'current'} = undef;
     $self->{'last'} = undef;
     
   } elsif ($self->{'first'} eq $key) {
-    $self->{'first'} = $self->{'nodes'}{$key}{'next'};
+    $self->{'first'} = $node->{'next'};
     $self->{'nodes'}{ $self->{'first'} }{'prev'} = undef;
+    $self->{'current'} = undef;
     
   } elsif ($self->{'last'} eq $key) {
-    $self->{'last'} = $self->{'nodes'}{$key}{'prev'};
+    $self->{'current'} = $self->{'last'} = $node->{'prev'};
     $self->{'nodes'}{ $self->{'last'} }{'next'} = undef;
     
   } else {
-    my $key_one   = $self->{'nodes'}{$key}{'prev'};
-    my $key_three = $self->{'nodes'}{$key}{'next'};
+    my $key_one   = $node->{'prev'};
+    my $key_three = $node->{'next'};
     $self->{'nodes'}{$key_one  }{'next'} = $key_three;
     $self->{'nodes'}{$key_three}{'prev'} = $key_one;
+    $self->{'current'} = $key_one;
   }
    
   return +(delete $self->{'nodes'}{$key})->{value};
@@ -398,3 +403,5 @@ This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =cut
+
+#  LocalWords:  undef

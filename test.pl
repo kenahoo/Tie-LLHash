@@ -112,3 +112,28 @@ ok 1;
     ok($k[0] eq 'zero' and $k[1] eq 'one')
   }
 }
+
+{
+  # Test deletes in a loop
+  tie my(%hash), "Tie::LLHash", {lazy => 1};
+  ok tied(%hash);
+  
+  $hash{one} = 1;
+  $hash{two} = 2;
+  $hash{three} = 3;
+  ok keys(%hash), 3;
+  
+  my ($k, $v) = each %hash;
+  ok $k, 'one';
+  delete $hash{$k};
+  
+  ($k, $v) = each %hash;
+  ok $k, 'two';
+  delete $hash{$k};
+  
+  ($k, $v) = each %hash;
+  ok $k, 'three';
+  delete $hash{$k};
+  
+  ok keys(%hash), 0;
+}
