@@ -396,7 +396,7 @@ I may also want to add a method for... um, I forgot.  Something.
 
 =head1 AUTHOR
 
-Ken Williams <ken@forum.swarthmore.edu>
+Ken Williams <kenahoo@gmail.com>
 
 Copyright (c) 1998 Swarthmore College. All rights reserved.
 This program is free software; you can redistribute it and/or
